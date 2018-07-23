@@ -1,0 +1,13 @@
+doctype html
+html
+  head
+    title Index
+    meta name="keywords" content="template language"
+
+    body
+      p
+        = link_to "Add questions", new_question_path(@question)
+        table
+          - for question in @questions
+            p
+              = link_to "Add answer #{question.title}", new_question_answer_path(question)
