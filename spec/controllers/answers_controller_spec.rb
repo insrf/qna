@@ -72,7 +72,7 @@ RSpec.describe AnswersController, type: :controller do
 
     context 'with invalid attributes' do
       it 'does not save the answer' do
-        expect { post :create, params: {answer: attributes_for(:invalid_answer), question_id: question.id} }.to_not change(question.answers, :count)
+        expect { post :create, params: {answer: attributes_for(:invalid_answer), question_id: question.id} }.to_not change(Answer, :count)
       end
 
       it 're-renders new view' do
@@ -90,9 +90,8 @@ RSpec.describe AnswersController, type: :controller do
       end
 
       it 'changes answer attributes' do
-        patch :update, params: { id: answer.id, answer: { title: 'new title', body: 'new body'} }
+        patch :update, params: { id: answer.id, answer: { body: 'new body'} }
         answer.reload
-        expect(answer.title).to eq 'new title'
         expect(answer.body).to eq 'new body'
       end
 
@@ -104,12 +103,11 @@ RSpec.describe AnswersController, type: :controller do
 
     context 'invalid attributes' do
       before do
-        patch :update, params: { id: answer, answer: { title: 'new title', body: nil, question_id: 2} }
+        patch :update, params: { id: answer, answer: { body: nil, question_id: 2} }
       end
 
       it 'does not change answer attributes' do
         answer.reload
-        expect(answer.title).to eq 'MyString'
         expect(answer.body).to eq 'MyText'
       end
 

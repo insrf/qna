@@ -1,6 +1,7 @@
-table
-  - @questions.each do |question|
-    p
-      = link_to "Add answer #{question.title}", new_question_answer_path(question)
+h1 All Question
 
-= link_to "Add questions", new_question_path(@question)
+h2 Questions
+
+= render @questions
+
+= link_to "New question", new_question_path(@question)
