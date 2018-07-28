@@ -9,4 +9,7 @@ html
     = javascript_include_tag "application", 'data-turbolinks-track' => true
 
   body
+
+    p.notice #{notice}
+    p.alert #{alert}
     = yield
