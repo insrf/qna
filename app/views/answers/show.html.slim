@@ -2,6 +2,7 @@ h1 Show Answer
 
 ul
   li #{@answer.question.title}
+  li #{@answer.question.body}
   li #{@answer.body}
 
 = link_to 'Back', question_path(@answer.question)

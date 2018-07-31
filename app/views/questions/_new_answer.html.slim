@@ -1,4 +1,6 @@
-= form_for [@question, @answer], local: true do |form|
+p New Answer
+
+= form_for [@question, @answer] do |form|
 
   = form.label :body
   = form.text_area :body
