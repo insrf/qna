@@ -20,7 +20,8 @@ ActiveRecord::Schema.define(version: 2018_07_29_161351) do
     t.integer "question_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "author_id", null: false
+    t.bigint "author_id"
+    t.index ["author_id"], name: "index_answers_on_author_id"
   end
 
   create_table "questions", force: :cascade do |t|
@@ -28,7 +29,8 @@ ActiveRecord::Schema.define(version: 2018_07_29_161351) do
     t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "author_id", null: false
+    t.bigint "author_id"
+    t.index ["author_id"], name: "index_questions_on_author_id"
   end
 
   create_table "users", force: :cascade do |t|

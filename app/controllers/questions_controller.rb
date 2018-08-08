@@ -1,13 +1,13 @@
 class QuestionsController < ApplicationController
   before_action :authenticate_user!, except: %w[index show]
-  before_action :load_question, only: %w[show edit update destroy]
-  before_action :load_answer, only: %w[show]
+  before_action :load_question, only: %w[new_answer show edit update destroy]
 
   def index
     @questions = Question.all
   end
 
   def show
+    @answers = Answer.where(question_id: params[:id])
     @answer = @question.answers.new
   end
 
@@ -19,7 +19,7 @@ class QuestionsController < ApplicationController
   end
 
   def create
-    @question = current_user.created_questions.new(question_params)
+    @question = current_user.questions.new(question_params)
 
     if @question.save
       flash[:notice] = 'Your question successfully created.'
@@ -30,7 +30,7 @@ class QuestionsController < ApplicationController
   end
 
   def update
-    if @question.update(question_params) || validates_user?
+    if @question.update(question_params)
       redirect_to @question
     else
       render :edit
@@ -38,7 +38,7 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
-    if validates_user?
+    if current_user.author_of?(@question)
       @question.destroy
       flash[:notice] = 'you successfully deleted'
       redirect_to questions_path
@@ -50,16 +50,8 @@ class QuestionsController < ApplicationController
 
   private
 
-  def validates_user?
-    current_user.id == @question.author_id
-  end
-
   def load_question
     @question = Question.find(params[:id])
-  end
-
-  def load_answer
-    @answer = Answer.where(question_id: params[:id])
   end
 
   def question_params

@@ -1,51 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe AnswersController, type: :controller do
-  let (:user) { create(:user) }
-  let(:question) { create(:question, author_id: user.id) }
-  let(:answer) { create(:answer, question: question, author_id: user.id) }
-
-  describe 'GET #index' do
-    let(:answers) { create_list(:answer, 2, question: question, author_id: user.id) }
-
-    before { get :index, params: {question_id: question.id} }
-
-    it 'populates an array of all answers' do
-      expect(assigns(:answers)).to match_array(answers)
-    end
-
-    it 'renders index view' do
-      expect(response).to render_template :index
-    end
-  end
-
-  describe 'GET #show' do
-    before do
-      get :show, params: {id: answer, question_id: question.id}
-    end
-
-    it 'assign the requested answer to @answer' do
-      expect(assigns(:answer)).to eq answer
-    end
-
-    it 'renders show view' do
-      expect(response).to render_template :show
-    end
-  end
-
-  describe 'GET #new' do
-    before { get :new, params: {question_id: question.id}}
-
-    it 'assigns a new Answer to @answer' do
-      expect(assigns(:answer)).to be_a_new(Answer)
-    end
-
-    it 'render new view' do
-      expect(response).to render_template :new
-    end
-  end
+  let!(:user) { create(:user) }
+  let(:question) { create(:question) }
+  let(:answer) { create(:answer, question: question) }
 
   describe 'GET #edit' do
+    sign_in_user
     before do
       get :edit, params: {id: answer}
     end
@@ -66,9 +27,13 @@ RSpec.describe AnswersController, type: :controller do
         expect { post :create, params: {answer: attributes_for(:answer), question_id: question.id} }.to change(question.answers, :count).by(1)
       end
 
+      it 'answer associates with current user' do
+        expect { post :create, params: {answer: attributes_for(:answer), question_id: question.id} }.to change(@user.answers, :count).by(1)
+      end
+
       it 'redirects to show view' do
         post :create, params: { answer: attributes_for(:answer), question_id: question.id }
-        expect(response).to redirect_to answer_path(assigns(:answer))
+        expect(response).to redirect_to question_path(question)
       end
     end
 
@@ -77,9 +42,9 @@ RSpec.describe AnswersController, type: :controller do
         expect { post :create, params: {answer: attributes_for(:invalid_answer), question_id: question.id} }.to_not change(Answer, :count)
       end
 
-      it 're-renders new view' do
+      it 're-renders question show view' do
         post :create, params: { answer: attributes_for(:invalid_answer), question_id: question.id }
-        expect(response).to render_template :new
+        expect(response).to render_template "questions/show"
       end
     end
   end
@@ -100,18 +65,18 @@ RSpec.describe AnswersController, type: :controller do
 
       it 'redirects to the updated answer' do
         patch :update, params: { id: answer, answer: attributes_for(:answer) }
-        expect(response).to redirect_to answer
+        expect(response).to redirect_to answer.question
       end
     end
 
     context 'invalid attributes' do
       before do
-        patch :update, params: { id: answer, answer: { body: nil, question_id: 2} }
+        patch :update, params: { id: answer, answer: { body: nil} }
       end
 
       it 'does not change answer attributes' do
         answer.reload
-        expect(answer.body).to eq 'MyText'
+        expect(answer.body).to eq answer.body
       end
 
       it 're-renders edit view' do
@@ -120,4 +85,33 @@ RSpec.describe AnswersController, type: :controller do
     end
   end
 
+  describe 'DELETE #destroy' do
+    sign_in_user
+    let!(:answer) { create(:answer, question: question, author: @user) }
+
+    context 'Author deletes his answer' do
+      it 'deletes answer' do
+        expect { delete :destroy, params: { id: answer} }.to change(Answer, :count).by(-1)
+      end
+
+      it 'redirect to question view' do
+        delete :destroy, params: { id: answer }
+        expect(response).to redirect_to question_path(question)
+      end
+    end
+
+    context 'Non Author delete him answer' do
+      let(:user2) { create(:user) }
+      let!(:answer2) { create(:answer, question: question, author: user2) }
+
+      it 'deletes answer' do
+        expect { delete :destroy, params: { id: answer2 } }.to_not change(Answer, :count)
+      end
+
+      it 'redirect to question view' do
+        delete :destroy, params: { id: answer }
+        expect(response).to redirect_to question_path(question)
+      end
+    end
+  end
 end

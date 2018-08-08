@@ -1,4 +1,6 @@
-= form_for [@question, @answer], local: true do |form|
+= form_for [@question, @answer] do |form|
+
+  = render 'layouts/errors', resource: @answer
 
   = form.label :body
   = form.text_area :body

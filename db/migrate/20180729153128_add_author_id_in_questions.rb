@@ -1,5 +1,5 @@
 class AddAuthorIdInQuestions < ActiveRecord::Migration[5.2]
   def change
-    add_column :questions, :author_id, :integer, null: false
+    add_belongs_to :questions, :author
   end
 end
