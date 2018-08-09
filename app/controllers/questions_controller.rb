@@ -7,7 +7,6 @@ class QuestionsController < ApplicationController
   end
 
   def show
-    @answers = Answer.where(question_id: params[:id])
     @answer = @question.answers.new
   end
 
@@ -41,11 +40,10 @@ class QuestionsController < ApplicationController
     if current_user.author_of?(@question)
       @question.destroy
       flash[:notice] = 'you successfully deleted'
-      redirect_to questions_path
     else
       flash[:notice] = 'you do not have enough rights'
-      redirect_to questions_path
     end
+    redirect_to questions_path
   end
 
   private

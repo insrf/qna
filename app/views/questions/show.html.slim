@@ -9,10 +9,10 @@ p Reply
 = render "questions/new_answer"
 
 ul
--@answers.each do |answer|
-  li= answer.body
-  - if user_signed_in?
-    - if current_user.author_of?(answer)
+-@question.answers.each do |answer|
+  - if answer.persisted?
+    li= answer.body
+    - if current_user&.author_of?(answer)
       = link_to 'Edit', edit_answer_path(answer)
       = link_to 'Delete', answer_path(answer), method: :delete, data: { confirm: "Are you sure? "}
 

@@ -7,12 +7,11 @@ class AnswersController < ApplicationController
   end
 
   def create
-    @answers = Answer.where(question_id: params[:question_id])
     @answer = @question.answers.new(answer_params)
-
-    if current_user.answers.push(@answer)
+    @answer.author_id = current_user.id
+    if @answer.save
       flash[:notice] = 'Your answer successfully created.'
-      redirect_to @answer.question
+      redirect_to @question
     else
       render "questions/show"
     end
@@ -40,10 +39,6 @@ class AnswersController < ApplicationController
 
   def load_answer
     @answer = Answer.find(params[:id])
-  end
-
-  def load_answers
-    @answers = Answer.where(question_id: params[:question_id])
   end
 
   def load_question
