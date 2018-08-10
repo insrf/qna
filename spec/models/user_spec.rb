@@ -15,16 +15,13 @@ RSpec.describe User do
     let!(:user) { create(:user) }
     let!(:user2) { create(:user) }
     let!(:question) { create(:question, author: user) }
-    let!(:answer) { create(:answer, question_id: question.id, author: user) }
 
     it "author item" do
-      expect(user.author_of?(question)).to eq(true)
-      expect(user.author_of?(answer)).to eq(true)
+      expect(user).to be_author_of(question)
     end
 
     it "another user item" do
-      expect(user2.author_of?(question)).to eq(false)
-      expect(user2.author_of?(answer)).to eq(false)
+      expect(user).to be_author_of(question)
     end
   end
 end
