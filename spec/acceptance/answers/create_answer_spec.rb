@@ -25,17 +25,17 @@ feature 'User can fill form for answer on questions page', %q{
       click_on 'Create Answer'
 
       expect(current_path).to eq question_path(question)
-      # expect(page).to have_content 'Your answer successfully created.'
       within '.answers' do
         expect(page).to have_content 'some answer'
       end
   end
 
-  scenario 'Authenticated user try to fill form to invalid answer on question page' do
+  scenario 'Authenticated user try to fill form to invalid answer on question page', js: true do
       sign_in(user)
 
       visit question_path(question)
       fill_in 'Body', with: ""
+
       click_on 'Create Answer'
 
       expect(page).to have_content "Body can't be blank"
