@@ -9,6 +9,6 @@ p Reply
 = render "questions/new_answer"
 
 .answers
-  = render "questions/answer"
+  = render @question.answers
 
 = link_to 'Back', questions_path
