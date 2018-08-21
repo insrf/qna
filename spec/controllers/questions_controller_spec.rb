@@ -23,8 +23,12 @@ RSpec.describe QuestionsController, type: :controller do
       get :show, params: {id: question}
     end
 
-    it 'assign the requested question to @question' do
+    it 'assigns the requested question to @question' do
       expect(assigns(:question)).to eq question
+    end
+
+    it 'assigns new answer for question' do
+      expect(assigns(:answer)).to be_a_new(Answer)
     end
 
     it 'renders show view' do
@@ -131,7 +135,7 @@ RSpec.describe QuestionsController, type: :controller do
   describe 'DELETE #destroy' do
     sign_in_user
     let!(:question) { create(:question, author: @user) }
-    
+
     context 'Author delete him question' do
       it 'deletes question' do
         expect { delete :destroy, params: { id: question } }.to change(Question, :count).by(-1)
